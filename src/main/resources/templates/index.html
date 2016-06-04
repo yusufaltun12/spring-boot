@@ -1,0 +1,27 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<title></title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="col-lg-11 col-centered"
+			style="width: 500px; height: 500px">
+			<input type="text" name="title" id="title"/>
+			<button id="add-task">Add </button>
+			<table id="task-table">
+				<tr th:each="task : ${tasks}">
+					<td>
+						<input class="status-check" th:if="${task.status} == 'ACTIVE'" title="Done" type="checkbox" th:value="${task.id}"/>
+						<input class="status-check" th:if="${task.status} == 'DONE'" type="checkbox" th:value="${task.id}" th:checked="true"/>
+					</td>
+					<td th:if="${task.status} == 'ACTIVE'" th:text="${task.title}" ></td>
+					<td th:if="${task.status} == 'DONE'" th:text="${task.title}" style="text-decoration: line-through;"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

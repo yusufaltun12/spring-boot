@@ -1,0 +1,82 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js}"></script>
+<script>
+	$(document).ready(function() {
+		
+		setOnChange();
+		
+		$('#add-task').click(function() {
+			console.log($('#title').val());
+			$.ajax({
+				url : '/task/add',
+				type : 'POST',
+				data : {"title" : $('#title').val()},
+				error : function(error) {
+				},
+				success : function(data) {
+					refreshTable();
+				}
+			});
+		});
+	});
+	
+	function refreshTable()
+	{
+			$.ajax({
+				url : '/task/get/all',
+				type : 'GET',
+				error : function(error) {
+				},
+				success : function(data) 
+				{
+					$("#task-table").empty();
+					
+					$.each(data, function(i, item) {
+						var tr = '<tr>';
+						tr += '<td><input class="status-check" title="Done" type="checkbox" value="'+ item.id +'"  /></td>';
+						
+						if(item.status == 'DONE')
+						{
+							tr += '<td style="text-decoration: line-through;">'+ item.title +'</td>';
+						}
+						else
+						{
+							tr += '<td>'+ item.title +'</td>';
+						}
+						
+						tr += '</tr>';
+						
+						$('#task-table').append(tr);
+						if(item.status == 'DONE')
+						{
+							$(":checkbox[value="+ item.id +"]").prop("checked","true");
+						}
+	
+		            });
+					
+					setOnChange();
+				}
+			});
+	}
+	
+	function setOnChange()
+	{
+		$('.status-check').change(function () {
+            var id = $(this).val();
+            if ($(this).is(':checked')) 
+            {
+       			$.ajax({
+       				url : '/task/set/status',
+       				type : 'POST',
+       				data : {"status" : 'DONE', "id" : id},
+       				error : function(error) {
+       				},
+       				success : function(data) {
+       					refreshTable();
+       				}
+       			});
+            }
+        });
+	}
+</script>
